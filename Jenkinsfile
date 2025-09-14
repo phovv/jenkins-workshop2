@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    REPO = 'https://github.com/phovv/phovv-workshop2.git'
+    REPO = 'https://github.com/phovv/jenkins-workshop2.git'
     PROJECT_NAME = 'phovv-workshop2'
     FIREBASE_TOKEN_CRED = 'firebase-token' // id credential in Jenkins
     FIREBASE_ADC_CRED = 'firebase-adc' // secret file id if used
@@ -33,14 +33,18 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'npm install'
+        dir('web-performance-project1-initial') {
+          sh 'npm ci || npm install'
+        }
       }
     }
 
     stage('Lint & Test') {
       steps {
         // Nếu muốn bypass lint để test deploy, có thể comment code trong source như đề
-        sh 'npm run test:ci'
+        dir('web-performance-project1-initial') {
+          sh 'npm run test:ci'
+        }
       }
     }
 
@@ -50,8 +54,8 @@ pipeline {
         // sh 'npm run build'
         // Giả sử build ra thư mục ./dist hoặc root project
         sh 'mkdir -p build_for_deploy'
-        sh "cp index.html 404.html -t build_for_deploy || true"
-        sh "cp -r css js images build_for_deploy || true"
+        sh "cp web-performance-project1-initial/index.html web-performance-project1-initial/404.html -t build_for_deploy || true"
+        sh "cp -r web-performance-project1-initial/css web-performance-project1-initial/js web-performance-project1-initial/images build_for_deploy || true"
       }
     }
 
@@ -124,8 +128,8 @@ pipeline {
           // Test SSH connection
           sh 'ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p 3334 -i ~/.ssh/id_rsa ${SSH_USER}@118.69.34.46 "echo SSH connection successful"'
 
-          sh "chmod +x scripts/deploy_remote.sh || true"
-          sh "scripts/deploy_remote.sh ${SSH_USER} 118.69.34.46 3334 /usr/share/nginx/html/jenkins/phovv/template2 ${pwd()}/build_for_deploy"
+          sh "chmod +x deploy/deploy_remote.sh || true"
+          sh "deploy/deploy_remote.sh ${SSH_USER} 118.69.34.46 3334 /usr/share/nginx/html/jenkins/phovv/template2 ${pwd()}/build_for_deploy"
         }
       }
     }
