@@ -14,13 +14,6 @@ pipeline {
     REMOTE_BASE = '/usr/share/nginx/html/jenkins/phovv/template2'
   }
 
-  triggers {
-    // Tự chạy khi có push từ GitHub (webhook)
-    githubPush()
-    // Dự phòng: nếu webhook chưa cấu hình, dùng PollSCM mỗi phút
-    pollSCM('H/1 * * * *')
-  }
-
   options {
     // Dùng checkout scm trong stage thay vì auto checkout đầu pipeline
     skipDefaultCheckout(true)
@@ -62,12 +55,6 @@ pipeline {
     }
 
     stage('Deploy - Firebase (token)') {
-      // when {
-      //   anyOf {
-      //     branch 'main'
-      //     branch 'master'
-      //   }
-      // }
       steps {
         withCredentials([string(credentialsId: env.FIREBASE_TOKEN_CRED, variable: 'FIREBASE_TOKEN')]) {
           // Debug Firebase setup
