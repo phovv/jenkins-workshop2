@@ -7,6 +7,9 @@ pipeline {
     FIREBASE_ADC_CRED = 'firebase-adc' // secret file id if used
     SSH_DEPLOY_KEY = 'ssh-deploy-key'
     SLACK_TOKEN = 'slack-token-ventura'
+    // Điền đúng subdomain Slack workspace của bạn (vd: myworkspace nếu URL là myworkspace.slack.com)
+    SLACK_TEAM_DOMAIN = 'your-slack-subdomain'
+    SLACK_BASE_URL = 'https://slack.com/api'
     REMOTE_HOST_PUBLIC = '10.1.1.195'
     REMOTE_HOST_SSH = '118.69.34.46'
     REMOTE_PORT = '3334'
@@ -157,6 +160,8 @@ pipeline {
         channel: '#lnd-2025-workshop',
         color: 'good',
         tokenCredentialId: env.SLACK_TOKEN,
+        teamDomain: env.SLACK_TEAM_DOMAIN,
+        baseUrl: env.SLACK_BASE_URL,
         message: """*✅ Deployment Successful!*
 *Author:* ${GIT_AUTHOR}
 *Commit:* ${GIT_COMMIT_MSG}
@@ -181,6 +186,8 @@ pipeline {
         channel: '#lnd-2025-workshop',
         color: 'danger',
         tokenCredentialId: env.SLACK_TOKEN,
+        teamDomain: env.SLACK_TEAM_DOMAIN,
+        baseUrl: env.SLACK_BASE_URL,
         message: """*❌ Deployment Failed!*
 *Author:* ${GIT_AUTHOR}
 *Commit:* ${GIT_COMMIT_MSG}
