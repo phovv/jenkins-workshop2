@@ -19,8 +19,15 @@ pipeline {
     skipDefaultCheckout(true)
   }
 
+  triggers {
+    // Webhook từ GitHub
+    githubPush()
+    // Dự phòng: quét mỗi phút nếu webhook chưa hoạt động
+    pollSCM('H/1 * * * *')
+  }
+
   stages {
-    stage('Checkout (scm)') {
+    stage('Checkout') {
       steps {
         checkout scm
       }
