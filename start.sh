@@ -22,31 +22,31 @@ read -p "Nhập lựa chọn (1, 2 hoặc 3, Enter = 1): " choice
 case ${choice:-1} in
     1)
         echo -e "${GREEN}🚀 Setup GitHub + Jenkins local...${NC}"
-        ./scripts/setup_jenkins_local.sh
-        ./scripts/setup_git.sh
+        ./setup/setup_jenkins_local.sh
+        ./setup/setup_git.sh
         
         echo ""
         echo -e "${YELLOW}📋 Bước tiếp theo:${NC}"
         echo "1. Truy cập Jenkins: http://localhost:8080"
-        echo "2. Tạo repository trên GitHub: https://github.com/phovv/phovv-workshop2"
+        echo "2. Tạo repository trên GitHub: https://github.com/phovv/jenkins-workshop2"
         echo "3. Cấu hình Jenkins credentials"
         echo "4. Tạo pipeline job"
         echo "5. Xem hướng dẫn: JENKINS_SETUP.md"
         ;;
     2)
         echo -e "${GREEN}🌐 Setup GitHub + Jenkins thật...${NC}"
-        ./scripts/setup_git.sh
+        ./setup/setup_git.sh
         
         echo ""
         echo -e "${YELLOW}📋 Bước tiếp theo:${NC}"
-        echo "1. Tạo repository trên GitHub: https://github.com/phovv/phovv-workshop2"
+        echo "1. Tạo repository trên GitHub: https://github.com/phovv/jenkins-workshop2"
         echo "2. Cấu hình Jenkins credentials"
         echo "3. Tạo pipeline job"
         echo "4. Xem hướng dẫn: JENKINS_SETUP.md"
         ;;
     3)
         echo -e "${GREEN}🐳 Khởi động môi trường Docker...${NC}"
-        ./scripts/docker_setup.sh
+        ./setup/docker_setup.sh
         
         echo ""
         echo -e "${YELLOW}📋 Bước tiếp theo:${NC}"
