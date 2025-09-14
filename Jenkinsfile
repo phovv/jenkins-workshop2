@@ -15,7 +15,9 @@ pipeline {
   }
 
   triggers {
-    // Auto-run when push to main using PollSCM (check every 1 minute)
+    // Tự chạy khi có push từ GitHub (webhook)
+    githubPush()
+    // Dự phòng: nếu webhook chưa cấu hình, dùng PollSCM mỗi phút
     pollSCM('H/1 * * * *')
   }
 
