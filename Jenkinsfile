@@ -157,15 +157,15 @@ pipeline {
         channel: '#lnd-2025-workshop',
         color: 'good',
         tokenCredentialId: 'SLACK_TOKEN',
+        iconEmoji: ':rocket:',
         message: """*✅ Deployment Successful!*
 *Author:* ${GIT_AUTHOR}
 *Commit:* ${GIT_COMMIT_MSG}
-*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
 *Time:* ${DEPLOY_TIME}
 
 *Links:*
 • Firebase: ${FIREBASE_URL}
-• Build Logs: ${env.BUILD_URL}"""
+• Remote: http://${REMOTE_HOST_PUBLIC}/jenkins/phovv/template2/deploy/current/"""
       )
     }
     failure {
@@ -181,12 +181,14 @@ pipeline {
         channel: '#lnd-2025-workshop',
         color: 'danger',
         tokenCredentialId: 'SLACK_TOKEN',
+        iconEmoji: ':x:',
         message: """*❌ Deployment Failed!*
 *Author:* ${GIT_AUTHOR}
 *Commit:* ${GIT_COMMIT_MSG}
-*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
 *Time:* ${DEPLOY_TIME}
-*Check Logs:* ${env.BUILD_URL}"""
+*Check Logs:* ${env.BUILD_URL}
+
+• Remote: http://${REMOTE_HOST_PUBLIC}/jenkins/phovv/template2/deploy/current/"""
       )
     }
     always {
