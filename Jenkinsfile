@@ -33,6 +33,17 @@ pipeline {
       }
     }
 
+    stage('Collect metadata') {
+      steps {
+        script {
+          env.GIT_AUTHOR = sh(script: "git log -1 --pretty=format:%an", returnStdout: true).trim()
+          env.GIT_COMMIT_MSG = sh(script: "git log -1 --pretty=format:%s", returnStdout: true).trim()
+          env.DEPLOY_TIME = sh(script: 'date "+%Y-%m-%d %H:%M:%S %Z"', returnStdout: true).trim()
+          env.FIREBASE_URL = "https://${env.PROJECT_NAME}.web.app"
+        }
+      }
+    }
+
     stage('Build') {
       steps {
         dir('web-performance-project1-initial') {
@@ -133,10 +144,53 @@ pipeline {
 
   post {
     success {
-      echo "✅ Pipeline completed successfully!"
+      echo 'Pipeline succeeded!'
+      echo "✅ Deployment Successful!"
+      echo "Author: ${GIT_AUTHOR}"
+      echo "Commit: ${GIT_COMMIT_MSG}"
+      echo "Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+      echo "Time: ${DEPLOY_TIME}"
+      echo "Firebase: ${FIREBASE_URL}"
+      echo "Build Logs: ${env.BUILD_URL}"
+
+      slackSend(
+        channel: '#lnd-2025-workshop',
+        color: 'good',
+        tokenCredentialId: env.SLACK_TOKEN,
+        message: """*✅ Deployment Successful!*
+*Author:* ${GIT_AUTHOR}
+*Commit:* ${GIT_COMMIT_MSG}
+*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
+*Time:* ${DEPLOY_TIME}
+
+*Links:*
+• Firebase: ${FIREBASE_URL}
+• Build Logs: ${env.BUILD_URL}"""
+      )
     }
     failure {
-      echo "❌ Pipeline failed!"
+      echo 'Pipeline failed!'
+      echo "❌ Deployment Failed!"
+      echo "Author: ${GIT_AUTHOR}"
+      echo "Commit: ${GIT_COMMIT_MSG}"
+      echo "Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+      echo "Time: ${DEPLOY_TIME}"
+      echo "Check Logs: ${env.BUILD_URL}"
+
+      slackSend(
+        channel: '#lnd-2025-workshop',
+        color: 'danger',
+        tokenCredentialId: env.SLACK_TOKEN,
+        message: """*❌ Deployment Failed!*
+*Author:* ${GIT_AUTHOR}
+*Commit:* ${GIT_COMMIT_MSG}
+*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
+*Time:* ${DEPLOY_TIME}
+*Check Logs:* ${env.BUILD_URL}"""
+      )
+    }
+    always {
+      echo 'Pipeline completed!'
     }
   }
 }
