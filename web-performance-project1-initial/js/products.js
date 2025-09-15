@@ -70,7 +70,4 @@ loadProducts();
 // Simulate heavy operation. It could be a complex price calculation.
 for (let i = 0; i < 10000000; i++) {
     const temp = Math.sqrt(i) * Math.sqrt(i);
-    // Sử dụng biến để tránh cảnh báo eslint no-unused-vars
-    if (i === -1) console.log(temp);
 }
-
