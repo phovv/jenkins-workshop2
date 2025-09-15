@@ -80,7 +80,7 @@ Vào **Manage Jenkins → Credentials → System → Global credentials (unrestr
 ### 1.5. Slack Token
 - **Kind**: Secret text
 - **ID**: `slack-token-ventura`
-- **Secret**: `fFs6If2vNs3HBdR4DYOPffOg`
+- **Secret**: ``
 
 ## 2. Tạo Pipeline Job
 
