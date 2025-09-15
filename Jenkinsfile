@@ -15,14 +15,14 @@ pipeline {
   }
 
   options {
-    // Dùng checkout scm trong stage thay vì auto checkout đầu pipeline
+    // Use checkout scm inside a stage instead of the pipeline's implicit checkout
     skipDefaultCheckout(true)
   }
 
   triggers {
-    // Webhook từ GitHub
+    // GitHub webhook
     githubPush()
-    // Dự phòng: quét mỗi phút nếu webhook chưa hoạt động
+    // Fallback: poll every minute if the webhook is not working yet
     pollSCM('H/1 * * * *')
   }
 
@@ -54,7 +54,7 @@ pipeline {
 
     stage('Lint & Test') {
       steps {
-        // Nếu muốn bypass lint để test deploy, có thể comment code trong source như đề
+        // To temporarily bypass lint for deployment testing, you can comment lint rules in the source as noted in the guide
         dir('web-performance-project1-initial') {
           sh 'npm run test:ci'
         }
@@ -63,9 +63,6 @@ pipeline {
 
     stage('Prepare artifacts') {
       steps {
-        // Nếu project build step (ví dụ npm run build)
-        // sh 'npm run build'
-        // Giả sử build ra thư mục ./dist hoặc root project
         sh 'mkdir -p build_for_deploy'
         sh "cp web-performance-project1-initial/index.html web-performance-project1-initial/404.html -t build_for_deploy || true"
         sh "cp -r web-performance-project1-initial/css web-performance-project1-initial/js web-performance-project1-initial/images build_for_deploy || true"
@@ -94,32 +91,15 @@ pipeline {
       }
     }
 
-    // stage('Deploy - Firebase (ADC alternative)') {
-    //   // when {
-    //   //   branch 'main'
-    //   // }
-    //   steps {
-    //     // Nếu muốn deploy bằng ADC: inject secret file và set GOOGLE_APPLICATION_CREDENTIALS
-    //     withCredentials([file(credentialsId: env.FIREBASE_ADC_CRED, variable: 'ADC_FILE')]) {
-    //       sh 'npm install -g firebase-tools || true'
-    //       sh 'export GOOGLE_APPLICATION_CREDENTIALS=$ADC_FILE'
-    //       dir('build_for_deploy') {
-    //         sh "firebase deploy --only hosting --project=${PROJECT_NAME}"
-    //       }
-    //     }
-    //   }
-    // }
-
-
     stage('Deploy - Remote Server (rsync/ssh)') {
-      // when { branch 'main' }
+      when { branch 'main' }
       steps {
-        // Sử dụng biến Jenkins credentials
+        // Use Jenkins credentials
         withCredentials([sshUserPrivateKey(credentialsId: env.SSH_DEPLOY_KEY, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
           sh 'mkdir -p ~/.ssh'
           sh 'chmod 700 ~/.ssh'
           
-          // Copy key từ biến Jenkins
+          // Copy the private key from Jenkins credential variable
           sh 'cp ${SSH_KEY} ~/.ssh/id_rsa'
           sh 'chmod 600 ~/.ssh/id_rsa'
           
