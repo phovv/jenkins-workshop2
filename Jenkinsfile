@@ -92,7 +92,6 @@ pipeline {
     }
 
     stage('Deploy - Remote Server (rsync/ssh)') {
-      when { branch 'main' }
       steps {
         // Use Jenkins credentials
         withCredentials([sshUserPrivateKey(credentialsId: env.SSH_DEPLOY_KEY, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
